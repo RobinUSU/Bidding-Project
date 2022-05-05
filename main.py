@@ -7,13 +7,13 @@ import numpy as np
 ### Find max: Basically a Max function to find highest bids.
 def findMax(bids):
     maxBid = max(bids)
-    print("Max is " + str(maxBid))
+    #print("Max is " + str(maxBid))
 
     return maxBid
 
 
 ### FindPrice1 will be my program to find the best bids.
-def findPrice1(bids):
+def findPrice1(bids, C1=500, C2=300, C3=100):
     print("In findprice")
     print("Bids: " + str(bids))
 
@@ -25,39 +25,74 @@ def findPrice1(bids):
     ### Trackers: bidsX for Max 3, BidsY to calculate VCG, and p0 to calculate first price for VCGs.
     bidsX = bids.tolist()  # Copy of Bids as a list For processing Top 3 bids:
     bidsY = bids.tolist()  # Copy of Bids as a list For processing VCG payments.
-    p0 = findPrice2(bidsY)  ### Original Price (VCG)
+    maxPrice = findPrice2(bidsY)  ### Original Price (VCG)
 
     ### 1: FirstBid
-    topBid = findMax(bidsX)  # Bidder 1 / highest bid
-    bidsX.remove(topBid)  # Removes Highest bid to find 2nd
+    firstBid = findMax(bidsX)  # Bidder 1 / highest bid
+    bidsX.remove(firstBid)  # Removes Highest bid to find 2nd
 
-    bidsY = bids.tolist()  # Copy of Bids as a list For processing VCG payments.
-    bidsY.remove(topBid)  # Removes Highest bid to find 2nd
-    p1 = p0 - findPrice2(bidsY)  ### 1st Price (VCG)
+    # bidsY = bids.tolist()  # Copy of Bids as a list For processing VCG payments.
+    # bidsY.remove(topBid)  # Removes Highest bid to find 2nd
+    # p1 = p0 - findPrice2(bidsY)  ### 1st Price (VCG)
 
     ### 2: SecondBid
     secondBid = findMax(bidsX)  # Bidder 2 / Second highest bid
     bidsX.remove(secondBid)  # Removes Highest bid to find 2nd
 
-    bidsY = bids.tolist()  # Copy of Bids as a list For processing VCG payments.
-    bidsY.remove(secondBid)  # (BidsY copy)
-    p2 = p0 - findPrice2(bidsY)  ### 2nd Price (VCG)
+    # bidsY = bids.tolist()  # Copy of Bids as a list For processing VCG payments.
+    # bidsY.remove(secondBid)  # (BidsY copy)
+    # p2 = p0 - findPrice2(bidsY)  ### 2nd Price (VCG)
 
     ### 3: ThirdBid
     thirdBid = findMax(bidsX)  # Bidder 2 / Second highest bid
     bidsX.remove(thirdBid)  # Removes Highest bid to find 2nd
 
-    bidsY = bids.tolist()  # Copy of Bids as a list For processing VCG payments.
-    bidsY.remove(thirdBid)  # Removes Highest bid to find 2nd
-    p3 = p0 - findPrice2(bidsY)  ### 1st Price (VCG)
+    ### 4: FourthBid. For VCG
+    fourthBid = findMax(bidsX)  # Bidder 2 / Second highest bid
 
-    print("\n FINAL RESULTS: p0: " + str(p0) + ", p1: " + str(p1) + ", p2: " + str(p2) + ", p3: " + str(p3))
-    print(p0)
+    p1 = firstBid
+    p2 = secondBid
+    p3 = thirdBid
+    p4 = fourthBid
+
+    ### A1 pays P2 * (C1 - C2) + P3 * (C2 - C3) + P4 * (C3 - 0)
+    a1Pays = p2 * (C1 - C2) + p3 * (C2 - C3) + p4 * (C3 - 0)
+    ri1 = (a1Pays) / C1
+
+    ### A2 pays P3 * (C2 - C3) + P4 * (C3 - 0)
+    a2Pays = p3 * (C2 - C3) + p4 * (C3 - 0)
+    ri2 = (a2Pays) / C2
+
+    ### A3 pays P4 * (C3 - 0)
+    a3Pays = p4 * (C3 - 0)
+    ri3 = (a3Pays) / C3
+
+    ### Conclusions:
+    print("\nA1 pays: $" + str(a1Pays) + ", wi = " + str(p1) + " at: " + str(ri1))
+    print("A2 pays: $" + str(a2Pays) + ", wi = " + str(p2) + " at: " + str(ri2))
+    print("A3 pays: $" + str(a3Pays) + ", wi = " + str(p3) + " at: " + str(ri3))
+
+    print("\n Social Welfare:")
+    sw1 = C1 * (p1 - ri1)  # Social welfare 1-3
+    sw2 = C2 * (p2 - ri2)
+    sw3 = C3 * (p3 - ri3)
+    print("| Ci  |  Wi  |  Ri  | Ci(Wi-Ri)  |")
+    print("|" + str(C1) + "  | " + str(p1)+ "  | " + str(round(ri1, 2)) + " | " + str(round(sw1, 2)) + "       |")
+    print("|" + str(C2) + "  | " + str(p2) + "  | " + str(round(ri2, 2)) + " | " + str(round(sw2, 2)) + "       |")
+    print("|" + str(C3) + "  | " + str(p3) + "  | " + str(round(ri3, 2)) + " | " + str(round(sw3, 2)) + "       |")
+    print("Total Social welfare: " + str(sw1 + sw2 + sw3))
+
+    # bidsY = bids.tolist()  # Copy of Bids as a list For processing VCG payments.
+    # bidsY.remove(thirdBid)  # Removes Highest bid to find 2nd
+    # p3 = p0 - findPrice2(bidsY)  ### 1st Price (VCG)
+    #
+    # print("\n FINAL RESULTS: p0: " + str(p0) + ", p1: " + str(p1) + ", p2: " + str(p2) + ", p3: " + str(p3))
+    # print(p0)
 
 
 ### FindPrice2: just a inner function to handle the prices for VCG
 ### S1, S2, and S3 Represent the amount of Slots expected, as 500, 300, and 100 clicks respectively.
-def findPrice2(bids, S1=500, S2=300, S3=100):
+def findPrice2(bids, C1=500, C2=300, C3=100):
     print("\nIn findprice2")
     print("Bids: " + str(bids))
 
@@ -77,7 +112,7 @@ def findPrice2(bids, S1=500, S2=300, S3=100):
 
     thirdBid = findMax(bidsX)  # Bidder 2 / Second highest bid
 
-    price = S1 * topBid + S2 * secondBid + S3 * thirdBid
+    price = C1 * topBid + C2 * secondBid + C3 * thirdBid
     print("Finalprice: " + str(price))
     return (price)
     # bidsX.remove(thirdBid)  # Removes Highest bid to find 2nd
@@ -111,6 +146,7 @@ if __name__ == '__main__':
 
     ### My code sections: begin
     print("\nMy Code Begins")
-    findPrice1(normalBids)
+    #findPrice1(normalBids)
 
+    findPrice1(np.array([0.50, 0.40, 0.30, 0.20, 0.10, 0.09, 0.09, 0.08, 0.08])) # Test case with word lecture Data
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
