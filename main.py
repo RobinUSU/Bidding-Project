@@ -174,29 +174,3 @@ if __name__ == '__main__':
 
     findPrice1(
         np.array(overBids), 50000, 3000, 100)  # Debugging Test case with word lecture Data
-
-
-    '''
-    Part 2
-    Suppose the bidders decide they don’t trust the mechanism and 
-    would rather pay a first price bid.  The bidders can’t bid their 
-    true evaluation, as their social welfare would be zero (if they 
-    pay exactly what it is worth).They will need to bid strategically, 
-    knowing the number of bidders and the type of bidder distribution 
-    (without knowing specific bid values).  
-    
-    No bidder will bid more than their valuation. 
-    Explain the bidding strategy used for each distribution. 
-    Show the actual valuation, the amount bid, and the social welfare of each case.
-    
-    '''
-
-    ''' 
-    The bidders would have to pay a price that they believed would be of best interest to them, without going above
-    their own valuations for a first price bid. 
-    
-    For this bidding strategy, i believe they could have used the K max evaluation that our tests talked about
-    Where depending upon the number of bidders, the bidders themselves wouldn't have to bid the highest, but could use 
-    expected distributions to maximize both their odds of gaining a return, but also gaining value from the bid as well. 
-    '''
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
